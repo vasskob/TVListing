@@ -3,7 +3,7 @@ package com.vasskob.tvchannels.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import org.apache.commons.lang3.builder.EqualsBuilder;
+
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -75,16 +75,16 @@ public class TvChannel {
         return new HashCodeBuilder().append(id).append(name).append(url).append(picture).append(categoryId).toHashCode();
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (other == this) {
-            return true;
-        }
-        if ((other instanceof TvChannel) == false) {
-            return false;
-        }
-        TvChannel rhs = ((TvChannel) other);
-        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(url, rhs.url).append(picture, rhs.picture).append(categoryId, rhs.categoryId).isEquals();
-    }
+//    @Override
+//    public boolean equals(Object other) {
+//        if (other == this) {
+//            return true;
+//        }
+//        if ((other instanceof TvChannel) == false) {
+//            return false;
+//        }
+//        TvChannel rhs = ((TvChannel) other);
+//        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(url, rhs.url).append(picture, rhs.picture).append(categoryId, rhs.categoryId).isEquals();
+//    }
 
 }

@@ -10,6 +10,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+       // multiDexEnabled true
     }
     buildTypes {
         release {
@@ -32,6 +33,15 @@ dependencies {
 
 // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+
+    //compile 'com.squareup.retrofit:retrofit:1.6.1'
+
+   // compile 'com.squareup.okhttp:okhttp:2.5.0'
+   // compile 'com.android.support:multidex:1.0.0'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+
+    compile 'com.android.support:recyclerview-v7:25.1.0'
 
 }
 

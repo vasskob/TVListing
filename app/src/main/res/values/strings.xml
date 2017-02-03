@@ -1,3 +1,14 @@
 <resources>
-    <string name="app_name">TVChannels</string>
+    <string name="app_name">TV Listing</string>
+    <string name="calendar_logo">Calendar</string>
+    <string name="app_github">GitHub</string>
+    <string name="app_github_url"><![CDATA[https://github.com/vasskob]]></string>
+    <string name="categories">Categories</string>
+    <string name="channels">Channels</string>
+    <string name="favorites">Favorite ch.</string>
+    <string name="other">Other</string>
+    <string name="update">Update Listing</string>
+    <string name="about">About</string>
+    <string name="about_txt">This application is create special for Boost Solution teem. </string>
+
 </resources>

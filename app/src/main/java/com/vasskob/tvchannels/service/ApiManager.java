@@ -5,7 +5,7 @@ import com.vasskob.tvchannels.model.TvCategory;
 import com.vasskob.tvchannels.model.TvChannel;
 import com.vasskob.tvchannels.model.TvListing;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Retrofit;
@@ -18,13 +18,13 @@ public class ApiManager {
    public interface ApiService {
 
         @GET("chanels")
-        Call<ArrayList<TvChannel>> getChannelInfo();
+        Call<List<TvChannel>> getChannelInfo();
 
         @GET("categories")
-        Call<ArrayList<TvCategory>> getCategoryInfo();
+        Call<List<TvCategory>> getCategoryInfo();
 
         @GET
-        Call<ArrayList<TvListing>> getListingInfo(@Url String emptyUrl);
+        Call<List<TvListing>> getListingInfo(@Url String emptyUrl);
     }
 
     public static ApiService getApiService(String baseUrl) {

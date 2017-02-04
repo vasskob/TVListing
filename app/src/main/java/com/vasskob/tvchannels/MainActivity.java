@@ -1,13 +1,10 @@
 package com.vasskob.tvchannels;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
@@ -21,66 +18,42 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
-import com.vasskob.tvchannels.data.TvChannelContract;
-import com.vasskob.tvchannels.model.TvCategory;
-import com.vasskob.tvchannels.model.TvChannel;
+import com.vasskob.tvchannels.data.DbFunction;
 import com.vasskob.tvchannels.model.TvListing;
-import com.vasskob.tvchannels.service.ApiManager;
 import com.vasskob.tvchannels.ui.AboutActivity;
 import com.vasskob.tvchannels.ui.ListingFragment;
-import com.vasskob.tvchannels.ui.adapter.Recycler_View_Adapter;
 import com.vasskob.tvchannels.ui.adapter.ViewPagerAdapter;
+import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static com.vasskob.tvchannels.data.TvChannelContract.CategoryEntry.COLUMN_CATEGORY_ID;
-import static com.vasskob.tvchannels.data.TvChannelContract.CategoryEntry.COLUMN_CATEGORY_PICTURE;
-import static com.vasskob.tvchannels.data.TvChannelContract.CategoryEntry.COLUMN_CATEGORY_TITLE;
-import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_CATEGORY_ID;
-import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_ID;
-import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_NAME;
-import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_PICTURE;
-import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_URL;
-import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_CHANNEL_ID;
-import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_DATE;
-import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_DESCRIPTION;
-import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_TIME;
-import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_TITLE;
-
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
     //
 //    private ProgressDialog progressDialog;
 //    final ListingFragment fragment = new ListingFragment();
-    List<TvChannel> tvChannels = new ArrayList<>();
-    List<TvCategory> tvCategories = new ArrayList<>();
-    List<TvListing> tvListings = new ArrayList<>();
 
     //save our header or result
     private Drawer result = null;
-//
-//    private int mRange;
-//    private List<Fragment> mFragmentList = new ArrayList<>();
-//    TabLayout mTab;
-//    ViewPager mVp;
-//    private VpAdapter mVpAdapter;
-//
-//    // LinearLayout mLayout;
-//    String[] tabsName = new String[10];
-
     private Toolbar toolbar;
     private SmartTabLayout tabLayout;
     private ViewPager viewPager;
+    DatePickerDialog dpd;
+    DbFunction dbFunction = new DbFunction(this);
+    List<String> tabTitles;
+    List<String> newTabTitles;
+    List<TvListing> tvListing;
+    ListingFragment fView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        final Calendar lastDay = Calendar.getInstance();
+        lastDay.add(Calendar.DAY_OF_MONTH, lastDay.getActualMaximum(Calendar.DAY_OF_MONTH) - lastDay.get(Calendar.DAY_OF_MONTH));
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -91,15 +64,28 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                Calendar now = Calendar.getInstance();
+                dpd = DatePickerDialog.newInstance(
+                        MainActivity.this,
+                        now.get(Calendar.YEAR),
+                        now.get(Calendar.MONTH),
+                        now.get(Calendar.DAY_OF_MONTH)
+                );
+                dpd.showYearPickerFirst(false);
+                dpd.setMinDate(now);
+                dpd.setMaxDate(lastDay);
+                dpd.setTitle("Select Date for Tv Listing");
+                dpd.show(getFragmentManager(), "Datepickerdialog");
+
             }
         });
         toolbar.addView(logo);
 
+        tabTitles = dbFunction.getChannelNames(null);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        setupViewPager(viewPager, tabTitles);
         tabLayout = (SmartTabLayout) findViewById(R.id.tabs);
         tabLayout.setViewPager(viewPager);
-
 
 
 
@@ -116,13 +102,13 @@ public class MainActivity extends AppCompatActivity {
                         new PrimaryDrawerItem().withName(R.string.channels).withIcon(FontAwesome.Icon.faw_television).withIdentifier(3).withSelectable(false),
                         new PrimaryDrawerItem().withName(R.string.favorites).withIcon(FontAwesome.Icon.faw_star_o).withIdentifier(4).withSelectable(true),
                         new SectionDrawerItem().withName(R.string.other).withIdentifier(5).withSelectable(false),
-                        new SecondaryDrawerItem().withName(R.string.update).withIcon(FontAwesome.Icon.faw_download).withIdentifier(6).withSelectable(true),
-                        new SecondaryDrawerItem().withName(R.string.app_github).withIcon(FontAwesome.Icon.faw_github).withIdentifier(7).withSelectable(true),
-                        new SecondaryDrawerItem().withName(R.string.about).withIcon(FontAwesome.Icon.faw_question).withIdentifier(8).withSelectable(true)
+                        new SecondaryDrawerItem().withName(R.string.sort).withIcon(FontAwesome.Icon.faw_sort).withIdentifier(6).withSelectable(true),
+                        new SecondaryDrawerItem().withName(R.string.update).withIcon(FontAwesome.Icon.faw_download).withIdentifier(7).withSelectable(true),
+                        new SecondaryDrawerItem().withName(R.string.app_github).withIcon(FontAwesome.Icon.faw_github).withIdentifier(8).withSelectable(true),
+                        new SecondaryDrawerItem().withName(R.string.about).withIcon(FontAwesome.Icon.faw_question).withIdentifier(9).withSelectable(true)
                 ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-
                         if (drawerItem != null) {
                             Intent intent = null;
                             long id = drawerItem.getIdentifier();
@@ -135,10 +121,12 @@ public class MainActivity extends AppCompatActivity {
                             } else if (id == 4) {
                                 intent = new Intent(MainActivity.this, AboutActivity.class);
                             } else if (id == 6) {
-                                intent = new Intent(MainActivity.this, AboutActivity.class);
+                                rerunSortedFragment();
                             } else if (id == 7) {
-                                openGitHub();
+                                intent = new Intent(MainActivity.this, AboutActivity.class);
                             } else if (id == 8) {
+                                openGitHub();
+                            } else if (id == 9) {
                                 intent = new Intent(MainActivity.this, AboutActivity.class);
                             }
                             if (intent != null) {
@@ -152,158 +140,27 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
 
-        ApiManager.getApiService(Constant.URL_CATEGORIES).getCategoryInfo().
-                enqueue(new Callback<List<TvCategory>>() {
-                            @Override
-                            public void onResponse
-                                    (Call<List<TvCategory>> call, Response<List<TvCategory>> response) {
-                                System.out.println("onRESPONSE!!!!");
-                                if (response.body() != null) {
-                                    tvCategories.addAll(response.body());
-//                            for (int i = 0; i < tvCategories.size(); i++) {
-//                                System.out.println(tvCategories.get(i));
-//                            }
-                                    if (tvCategories.size() > 0) {
-                                        //  insertListCategories(tvCategories);
-                                    }
-                                } else {
-                                    System.out.println("RESPONSE IS NULL " + response.errorBody().toString());
-                                }
+    }
 
-                                //  recyclerView.getAdapter().notifyDataSetChanged();
-                            }
+    private void rerunSortedFragment() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat mFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+//        fView = null;
+//        fView = new ListingFragment();
+        newTabTitles = dbFunction.getChannelNames("name ASC");
+        setupViewPager(viewPager, newTabTitles);
+        tabLayout.setViewPager(viewPager);
 
-                            @Override
-                            public void onFailure(Call<List<TvCategory>> call, Throwable t) {
-                                System.out.println("onFAILUREEEEEEE!!!");
-                            }
-
-                        }
-
-                );
-
-
-        ApiManager.getApiService(Constant.URL_CHANNELS).getChannelInfo().
-                enqueue(new Callback<List<TvChannel>>() {
-                            @Override
-                            public void onResponse
-                                    (Call<List<TvChannel>> call, Response<List<TvChannel>> response) {
-                                System.out.println("onRESPONSE!!!!");
-                                if (response.body() != null) {
-                                    tvChannels.addAll(response.body());
-
-//                                    for (int i = 0; i < tvChannels.size(); i++) {
-//                                        //System.out.println(tvChannels.get(i));
+//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listing_r_view);
+////        for (int i = 0; i < newTabTitles.size(); i++) {
 //
-//                                        //tabsName[i] = tvChannels.get(i).getName();
-//                                    }
-                                    if (tvChannels.size() > 0) {
-                                        //   insertListChannels(tvChannels);
+//            tvListing = dbFunction.getChannelListing(newTabTitles.get(0), mFormat.format(cal.getTime()));
+//            Recycler_View_Adapter adapter = new Recycler_View_Adapter(tvListing, getApplicationContext());
+//            recyclerView.setAdapter(adapter);
+//            recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-                                    } else {
-                                        Toast.makeText(getApplicationContext(), "DATABASE IS NOT created", Toast.LENGTH_LONG).show();
-                                    }
-
-                                } else {
-                                    System.out.println("RESPONSE IS NULL " + response.errorBody().toString());
-                                }
-
-                                //  recyclerView.getAdapter().notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onFailure(Call<List<TvChannel>> call, Throwable t) {
-                                System.out.println("onFAILUREEEEEEE!!!");
-                            }
-
-                        }
-
-                );
-
-
-        ApiManager.getApiService(Constant.URL_LISTINGS + System.currentTimeMillis() + "/").
-                getListingInfo("").
-                enqueue(new Callback<List<TvListing>>() {
-                            @Override
-                            public void onResponse
-                                    (Call<List<TvListing>> call, Response<List<TvListing>> response) {
-                                System.out.println("onRESPONSE!!!!");
-                                if (response.body() != null) {
-                                    tvListings.addAll(response.body());
-
-                                    RecyclerView recyclerView = (RecyclerView) findViewById(R.id.listing_r_view);
-                                    Recycler_View_Adapter adapter = new Recycler_View_Adapter(tvListings, getApplication());
-                                    recyclerView.setAdapter(adapter);
-                                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
-//                            for (int i = 0; i < tvListings.size(); i++) {
-//                                System.out.println(tvListings.get(i));
-//                            }
-                                    if (tvListings.size() > 0) {
-                                        //  insertListListings(tvListings);
-                                    }
-                                } else {
-                                    System.out.println("RESPONSE IS NULL " + response.errorBody().toString());
-                                }
-
-                                //  recyclerView.getAdapter().notifyDataSetChanged();
-                            }
-
-                            @Override
-                            public void onFailure(Call<List<TvListing>> call, Throwable t) {
-                                System.out.println("onFAILUREEEEEEE!!!");
-                            }
-
-                        }
-
-                );
-
-    }
-
-    public void insertListChannels(List<TvChannel> channels) {
-        ContentValues[] valuesArray = new ContentValues[channels.size()];
-
-        for (int i = 0; i < channels.size(); i++) {
-            TvChannel channel = channels.get(i);
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_CHANNEL_ID, channel.getId());
-            values.put(COLUMN_CHANNEL_NAME, channel.getName());
-            values.put(COLUMN_CHANNEL_URL, channel.getUrl());
-            values.put(COLUMN_CHANNEL_PICTURE, channel.getPicture());
-            values.put(COLUMN_CHANNEL_CATEGORY_ID, channel.getCategoryId());
-            valuesArray[i] = values;
-        }
-        getContentResolver().bulkInsert(TvChannelContract.ChannelEntry.CONTENT_URI, valuesArray);
-
-    }
-
-    public void insertListCategories(List<TvCategory> categories) {
-        ContentValues[] valuesArray = new ContentValues[categories.size()];
-        for (int i = 0; i < categories.size(); i++) {
-            TvCategory category = categories.get(i);
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_CATEGORY_ID, category.getId());
-            values.put(COLUMN_CATEGORY_TITLE, category.getTitle());
-            values.put(COLUMN_CATEGORY_PICTURE, category.getPicture());
-            valuesArray[i] = values;
-        }
-        getContentResolver().bulkInsert(TvChannelContract.CategoryEntry.CONTENT_URI, valuesArray);
-
-    }
-
-    public void insertListListings(List<TvListing> listings) {
-        ContentValues[] valuesArray = new ContentValues[listings.size()];
-        for (int i = 0; i < listings.size(); i++) {
-            TvListing listing = listings.get(i);
-            ContentValues values = new ContentValues();
-            values.put(COLUMN_LISTING_DATE, listing.getDate());
-            values.put(COLUMN_LISTING_TIME, listing.getTime());
-            values.put(COLUMN_LISTING_TITLE, listing.getTitle());
-            values.put(COLUMN_LISTING_DESCRIPTION, listing.getDescription());
-            values.put(COLUMN_LISTING_CHANNEL_ID, listing.getChannelId());
-            valuesArray[i] = values;
-        }
-        getContentResolver().bulkInsert(TvChannelContract.ListingEntry.CONTENT_URI, valuesArray);
+//            //cal.add();
+//        }
 
     }
 
@@ -311,6 +168,7 @@ public class MainActivity extends AppCompatActivity {
     private int getIconId() {
         Calendar c = Calendar.getInstance();
         int day = c.get(Calendar.DAY_OF_MONTH);
+
         return getResources().getIdentifier("calendar_" + day, "drawable", this.getPackageName());
     }
 
@@ -353,20 +211,33 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager(ViewPager viewPager, List<String> titles) {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-        int count = 10;
-        for (int i = 0; i < count; i++) {
-
-            ListingFragment fView = new ListingFragment();
-            adapter.addFrag(fView, "TAB " + i);
+        for (int i = 0; i < titles.size(); i++) {
+            fView = new ListingFragment();
+            adapter.addFrag(fView, titles.get(i));
         }
 
 
         viewPager.setAdapter(adapter);
+        
     }
 
+
+    @Override
+    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+        String date = "Selected Date : " + dayOfMonth + "-" + (monthOfYear + 1);
+
+        Toast.makeText(MainActivity.this, date, Toast.LENGTH_LONG).show();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        rerunSortedFragment();
+    }
 }
 

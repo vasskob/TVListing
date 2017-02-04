@@ -26,7 +26,7 @@ public class TvChannelProvider extends BaseContentProvider {
     private static final String TYPE_CURSOR_ITEM = "vnd.android.cursor.item/";
     private static final String TYPE_CURSOR_DIR = "vnd.android.cursor.dir/";
 
-    public static final String AUTHORITY = "com.vasskob.tvchannels.data";
+    public static final String AUTHORITY = "com.vasskob.tvchannels";
     // /public static final String CONTENT_URI_BASE = "content://" + AUTHORITY;
 
     private static final int URI_TYPE_CATEGORIES = 0;
@@ -128,7 +128,7 @@ public class TvChannelProvider extends BaseContentProvider {
                 res.table = CategoryEntry.TABLE_NAME;
                 res.idColumn = CategoryEntry.COLUMN_CATEGORY_ID;
                 res.tablesWithJoins = CategoryEntry.TABLE_NAME;
-                res.orderBy = CategoryEntry.DEFAULT_ORDER;
+           //     res.orderBy = CategoryEntry.DEFAULT_ORDER;
                 break;
 
             case URI_TYPE_CHANNELS:
@@ -136,7 +136,7 @@ public class TvChannelProvider extends BaseContentProvider {
                 res.table = ChannelEntry.TABLE_NAME;
                 res.idColumn = ChannelEntry.COLUMN_CHANNEL_ID;
                 res.tablesWithJoins = ChannelEntry.TABLE_NAME;
-                res.orderBy = ChannelEntry.DEFAULT_ORDER;
+            //    res.orderBy = ChannelEntry.DEFAULT_ORDER;
                 break;
 
             case URI_TYPE_LISTING:
@@ -144,7 +144,7 @@ public class TvChannelProvider extends BaseContentProvider {
                 res.table = ListingEntry.TABLE_NAME;
                 res.idColumn = ListingEntry.COLUMN_LISTING_CHANNEL_ID;
                 res.tablesWithJoins = ListingEntry.TABLE_NAME;
-                res.orderBy = ListingEntry.DEFAULT_ORDER;
+             //   res.orderBy = ListingEntry.DEFAULT_ORDER;
                 break;
 
             default:

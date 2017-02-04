@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Url;
 
-public class ApiManager {
+public class RetrofitApiManager {
 
    public interface ApiService {
 

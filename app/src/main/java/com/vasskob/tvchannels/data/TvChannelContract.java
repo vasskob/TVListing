@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.text.format.Time;
 
 public class TvChannelContract {
 
@@ -13,6 +12,7 @@ public class TvChannelContract {
     // content authority is the package name for the app, which is guaranteed to be unique on the
     // device.
     public static final String CONTENT_AUTHORITY = "com.vasskob.tvchannels";
+
 
     // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
     // the content provider.
@@ -27,15 +27,6 @@ public class TvChannelContract {
     public static final String PATH_CHANNEL = "channel";
     public static final String PATH_LISTING = "listing";
 
-    // To make it easy to query for the exact date, we normalize all dates that go into
-    // the database to the start of the the Julian day at UTC.
-    public static long normalizeDate(long startDate) {
-        // normalize the start date to the beginning of the (UTC) day
-        Time time = new Time();
-        time.set(startDate);
-        int julianDay = Time.getJulianDay(startDate, time.gmtoff);
-        return time.setJulianDay(julianDay);
-    }
 
     /* Inner class that defines the table contents of the location table */
     public static final class CategoryEntry implements BaseColumns {
@@ -71,6 +62,11 @@ public class TvChannelContract {
         public static Uri buildCategoryUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static String[] FULL_PROJECTION = new String[]{
+                COLUMN_CATEGORY_ID,
+                COLUMN_CATEGORY_TITLE,
+                COLUMN_CATEGORY_PICTURE};
     }
 
     /* Inner class that defines the table contents of the weather table */
@@ -109,40 +105,15 @@ public class TvChannelContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        /*
-             Student: This is the buildWeatherLocation function you filled in.
-          */
-//        public static Uri buildWeatherLocation(String locationSetting) {
-//            return CONTENT_URI.buildUpon().appendPath(locationSetting).build();
-//        }
-//
-//        public static Uri buildWeatherLocationWithStartDate(
-//                String locationSetting, long startDate) {
-//            long normalizedDate = normalizeDate(startDate);
-//            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-//                    .appendQueryParameter(COLUMN_CHANNEL_NAME, Long.toString(normalizedDate)).build();
-//        }
-//
-//        public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
-//            return CONTENT_URI.buildUpon().appendPath(locationSetting)
-//                    .appendPath(Long.toString(normalizeDate(date))).build();
-//        }
-//
-//        public static String getLocationSettingFromUri(Uri uri) {
-//            return uri.getPathSegments().get(1);
-//        }
-//
-//        public static long getDateFromUri(Uri uri) {
-//            return Long.parseLong(uri.getPathSegments().get(2));
-//        }
-//
-//        public static long getStartDateFromUri(Uri uri) {
-//            String dateString = uri.getQueryParameter(COLUMN_CHANNEL_NAME);
-//            if (null != dateString && dateString.length() > 0)
-//                return Long.parseLong(dateString);
-//            else
-//                return 0;
-//        }
+        public static String[] FULL_PROJECTION = new String[]{
+                COLUMN_CHANNEL_ID,
+                COLUMN_CHANNEL_NAME,
+                COLUMN_CHANNEL_URL,
+                COLUMN_CHANNEL_PICTURE,
+                COLUMN_CHANNEL_CATEGORY_ID,
+                COLUMN_CHANNEL_FAVORITE};
+        public static String[] NAME_PROJECTION = new String[]{
+                COLUMN_CHANNEL_NAME};
     }
 
     /* Inner class that defines the table contents of the location table */
@@ -179,15 +150,22 @@ public class TvChannelContract {
         // map intent, we store the latitude and longitude as returned by openweathermap.
         public static final String COLUMN_LISTING_DESCRIPTION = "description";
 
-        public static final String DEFAULT_ORDER = TABLE_NAME + "." + COLUMN_LISTING_CHANNEL_ID + ","
-                + TABLE_NAME + "." + COLUMN_LISTING_DATE + ","
-                + TABLE_NAME + "." + COLUMN_LISTING_TIME + ","
-                + TABLE_NAME + "." + COLUMN_LISTING_TITLE + ","
-                + TABLE_NAME + "." + COLUMN_LISTING_DESCRIPTION;
+//        public static final String DEFAULT_ORDER = TABLE_NAME + "." + COLUMN_LISTING_CHANNEL_ID + ","
+//                + TABLE_NAME + "." + COLUMN_LISTING_DATE + ","
+//                + TABLE_NAME + "." + COLUMN_LISTING_TIME + ","
+//                + TABLE_NAME + "." + COLUMN_LISTING_TITLE + ","
+//                + TABLE_NAME + "." + COLUMN_LISTING_DESCRIPTION;
 
         public static Uri buildListingUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static String[] FULL_PROJECTION = new String[]{
+                COLUMN_LISTING_ID,
+                COLUMN_LISTING_DATE,
+                COLUMN_LISTING_TIME,
+                COLUMN_LISTING_TITLE,
+                COLUMN_LISTING_CHANNEL_ID};
     }
 
 

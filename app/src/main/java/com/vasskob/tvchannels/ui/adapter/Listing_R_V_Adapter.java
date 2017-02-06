@@ -8,17 +8,18 @@ import android.view.ViewGroup;
 
 import com.vasskob.tvchannels.R;
 import com.vasskob.tvchannels.model.TvListing;
+import com.vasskob.tvchannels.ui.adapter.holder.Listing_View_Holder;
 
 import java.util.Collections;
 import java.util.List;
 
 
-public class Recycler_View_Adapter extends RecyclerView.Adapter<Listing_View_Holder> {
+public class Listing_R_V_Adapter extends RecyclerView.Adapter<Listing_View_Holder> {
 
     List<TvListing> list = Collections.emptyList();
     Context context;
 
-    public Recycler_View_Adapter(List<TvListing> list, Context context) {
+    public Listing_R_V_Adapter(List<TvListing> list, Context context) {
         this.list = list;
         this.context = context;
     }
@@ -28,8 +29,7 @@ public class Recycler_View_Adapter extends RecyclerView.Adapter<Listing_View_Hol
     public Listing_View_Holder onCreateViewHolder(ViewGroup parent, int viewType) {
         //Inflate the layout, initialize the View Holder
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.listing_layout, parent, false);
-        Listing_View_Holder holder = new Listing_View_Holder(v);
-        return holder;
+        return new Listing_View_Holder(v);
 
     }
 
@@ -41,8 +41,6 @@ public class Recycler_View_Adapter extends RecyclerView.Adapter<Listing_View_Hol
         holder.date.setText(list.get(position).getDate());
         holder.title.setText(list.get(position).getTitle());
         holder.description.setText(list.get(position).getDescription());
-
-        //animate(holder);
 
     }
 
@@ -57,17 +55,5 @@ public class Recycler_View_Adapter extends RecyclerView.Adapter<Listing_View_Hol
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    // Insert a new item to the RecyclerView on a predefined position
-    public void insert(int position, TvListing data) {
-        list.add(position, data);
-        notifyItemInserted(position);
-    }
-
-    // Remove a RecyclerView item containing a specified Data object
-    public void remove(TvListing data) {
-        int position = list.indexOf(data);
-        list.remove(position);
-        notifyItemRemoved(position);
-    }
 
 }

@@ -3,6 +3,8 @@ package com.vasskob.tvchannels.data;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.vasskob.tvchannels.model.TvCategory;
 import com.vasskob.tvchannels.model.TvChannel;
@@ -15,6 +17,7 @@ import static com.vasskob.tvchannels.data.TvChannelContract.CategoryEntry.COLUMN
 import static com.vasskob.tvchannels.data.TvChannelContract.CategoryEntry.COLUMN_CATEGORY_PICTURE;
 import static com.vasskob.tvchannels.data.TvChannelContract.CategoryEntry.COLUMN_CATEGORY_TITLE;
 import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_CATEGORY_ID;
+import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_FAVORITE;
 import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_ID;
 import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_NAME;
 import static com.vasskob.tvchannels.data.TvChannelContract.ChannelEntry.COLUMN_CHANNEL_PICTURE;
@@ -25,16 +28,15 @@ import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_
 import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_TIME;
 import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_TITLE;
 
-/**
- * Created by anonymous on 03.02.17.
- */
 
 public class DbFunction {
 
-    Context mContext;
+    private Context mContext;
+    //private TvChannelDbHelper mDbHelper;
 
     public DbFunction(Context context) {
         this.mContext = context;
+        //  mDbHelper = TvChannelDbHelper.getInstance(context);
     }
 
     /**
@@ -134,38 +136,17 @@ public class DbFunction {
         return names;
     }
 
-//    public List<TvListing> getChannelListing(
-
-//    ) {
-//        List<TvListing> tvListingList = new ArrayList<>();
-//
-//
-//        Cursor c = mContext.getContentResolver().query(
-//                TvChannelContract.ListingEntry.CONTENT_URI,
-//                TvChannelContract.ListingEntry.FULL_PROJECTION,
-//                null,
-//                null,
-//                null);
-//
-//              if (c != null) {
-//            for (c.moveToFirst(); !c.isAfterLast(); c.moveToNext()) {
-//                TvListing tvListing = new TvListing();
-//
-//                tvListing.setChannelId(c.getInt(c.getColumnIndexOrThrow("channel_id")));
-//                tvListing.setDate(c.getString(c.getColumnIndexOrThrow("l_date")));
-//                tvListing.setTime(c.getString(c.getColumnIndexOrThrow("l_time")));
-//                tvListing.setTitle(c.getString(c.getColumnIndexOrThrow("title")));
-//                tvListing.setDescription(c.getString(c.getColumnIndexOrThrow("description")));
-//                tvListingList.add(tvListing);
-//            }
-//            c.close();
-//        }
-//        return tvListingList;
-//    }
-
+    /**
+     * Return List of TvListing object for
+     * channel with ch_id for date
+     *
+     * @param channel_Id - id of channel listing for
+     * @param forDate    -   date of channel listing
+     * @return
+     */
     public List<TvListing> getChannelListing(String channel_Id, String forDate) {
-        List<TvListing> programs = new ArrayList<>();
-        String[] selectionArgs = new String[]{String.valueOf(channel_Id), forDate};
+        List<TvListing> listings = new ArrayList<>();
+        String[] selectionArgs = new String[]{channel_Id, forDate};
         Cursor cursor = mContext.getContentResolver().query(
                 TvChannelContract.ListingEntry.CONTENT_URI,
                 TvChannelContract.ListingEntry.FULL_PROJECTION,
@@ -175,21 +156,259 @@ public class DbFunction {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
 
+
+                int idColIndex = cursor.getColumnIndex(COLUMN_LISTING_CHANNEL_ID);
                 int dateColIndex = cursor.getColumnIndex(COLUMN_LISTING_DATE);
                 int timeColIndex = cursor.getColumnIndex(COLUMN_LISTING_TIME);
                 int titleColIndex = cursor.getColumnIndex(COLUMN_LISTING_TITLE);
+                int chnIdIndex = cursor.getColumnIndex(COLUMN_LISTING_DESCRIPTION);
+                System.out.println(String.format(">>%d>>%d>>%d>>%d>>%d", idColIndex, dateColIndex, timeColIndex, titleColIndex, chnIdIndex));
+
                 do {
                     TvListing listing = new TvListing();
                     listing.setTitle(cursor.getString(titleColIndex));
                     listing.setTime(cursor.getString(timeColIndex));
                     listing.setDate(cursor.getString(dateColIndex));
-                    programs.add(listing);
+//                    listing.setChannelId(cursor.getInt(idColIndex));
+                    listing.setDescription(cursor.getString(chnIdIndex));
+                    listings.add(listing);
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
-        return programs;
+
+        return listings;
     }
 
+    /**
+     * Erace all data from all Tables in DB
+     */
+    public void eraseDbTables() {
 
+        mContext.getContentResolver().delete(TvChannelContract.ChannelEntry.CONTENT_URI, null, null);
+        mContext.getContentResolver().delete(TvChannelContract.CategoryEntry.CONTENT_URI, null, null);
+        mContext.getContentResolver().delete(TvChannelContract.ListingEntry.CONTENT_URI, null, null);
+
+    }
+
+    /**
+     * Return List of TvChannel categories
+     *
+     * @return categories
+     */
+    public List<TvCategory> getChannelCategories() {
+
+        List<TvCategory> categories = new ArrayList<>();
+
+        Cursor cursor = mContext.getContentResolver().query(
+                TvChannelContract.CategoryEntry.CONTENT_URI,
+                TvChannelContract.CategoryEntry.FULL_PROJECTION,
+                null,
+                null,
+                null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    TvCategory category = new TvCategory();
+                    category.setId(cursor.getInt(cursor.getColumnIndex(TvChannelContract.CategoryEntry.COLUMN_CATEGORY_ID)));
+                    category.setTitle(cursor.getString(cursor.getColumnIndex(TvChannelContract.CategoryEntry.COLUMN_CATEGORY_TITLE)));
+                    category.setPicture(cursor.getString(cursor.getColumnIndex(TvChannelContract.CategoryEntry.COLUMN_CATEGORY_PICTURE)));
+                    categories.add(category);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        System.out.println(" Category Picture from DBFunc " + categories.get(0).getTitle() + " !!!");
+        return categories;
+    }
+
+    /**
+     * Return List of all Channels
+     *
+     * @return List of channels
+     */
+    public List<TvChannel> getChannels() {
+        List<TvChannel> channels = new ArrayList<>();
+        Cursor cursor = mContext.getContentResolver().query(
+                TvChannelContract.ChannelEntry.CONTENT_URI,
+                TvChannelContract.ChannelEntry.FULL_PROJECTION,
+                null,
+                null,
+                null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    TvChannel channel = new TvChannel();
+                    channel.setName(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_NAME)));
+                    channel.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_ID)));
+                    channel.setIsFavorite(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_FAVORITE)));
+                    channel.setPicture(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_PICTURE)));
+                    channel.setUrl(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_URL)));
+                    String category = getCategoryForChannel(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_CATEGORY_ID)));
+                    channel.setCategory_name(category);
+
+                    channels.add(channel);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        System.out.println(" Category Picture from DBFunc " + channels.get(0).getName() + " !!!");
+        return channels;
+
+    }
+
+    /**
+     * Return Category name by id
+     *
+     * @param id of category to
+     * @return category name
+     */
+    public String getCategoryForChannel(int id) {
+
+        String categoryName = "category";
+        Cursor cursor = mContext.getContentResolver().query(
+                TvChannelContract.CategoryEntry.CONTENT_URI,
+                TvChannelContract.CategoryEntry.FULL_PROJECTION,
+                COLUMN_CATEGORY_ID + " = ? ",
+                new String[]{String.valueOf(id)},
+                null);
+        System.out.println();
+        if (cursor != null && cursor.moveToFirst()) {
+            categoryName = cursor.getString(cursor.getColumnIndex(COLUMN_CATEGORY_TITLE));
+            cursor.close();
+        }
+        return categoryName;
+
+    }
+
+    /**
+     * @param channelName
+     * @param checked
+     */
+    public void markAsFavoriteInDb(String channelName, int checked) {
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CHANNEL_FAVORITE, checked);
+        int k = mContext.getContentResolver().update(TvChannelContract.ChannelEntry.CONTENT_URI,
+                values,
+                // COLUMN_CHANNEL_ID + " = ?",
+                COLUMN_CHANNEL_NAME + " = ?",
+                new String[]{channelName});
+        System.out.println("Channel with position " + channelName + "is Checked" + checked);
+    }
+
+    public List<TvChannel> getFavoriteChannels() {
+        List<TvChannel> channels = new ArrayList<>();
+        Cursor cursor = mContext.getContentResolver().query(
+                TvChannelContract.ChannelEntry.CONTENT_URI,
+                TvChannelContract.ChannelEntry.FULL_PROJECTION,
+                COLUMN_CHANNEL_FAVORITE + "!=?",
+                new String[]{String.valueOf(0)},
+                null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    TvChannel channel = new TvChannel();
+                    channel.setName(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_NAME)));
+                    channel.setUrl(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_URL)));
+                    channel.setPicture(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_PICTURE)));
+                    channel.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_ID)));
+                    channel.setIsFavorite(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_FAVORITE)));
+                    channel.setCategory_name(getCategoryForChannel(cursor.getColumnIndex(COLUMN_CHANNEL_CATEGORY_ID)));
+                    channels.add(channel);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        return channels;
+    }
+
+    public List<TvListing> getSortedListing(String channel_name, String forDate) {
+        List<TvListing> listings = new ArrayList<>();
+        TvChannelDbHelper tvDb = TvChannelDbHelper.getInstance(mContext);
+        SQLiteDatabase db = tvDb.getWritableDatabase();
+        String sqlQuery = "select time, date, title, " +
+                "description, channel.name from listing  " +
+                "join  channel on listing.channel_id=" +
+                "channel._id where date='?' and  " +
+                "channel.name='?'";
+        Cursor cursor = db.rawQuery(sqlQuery, new String[]{forDate, channel_name});
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    TvListing listing = new TvListing();
+                    listing.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_DATE)));
+                    listing.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_TIME)));
+                    listing.setTitle(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_TITLE)));
+                    listing.setDescription(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_DESCRIPTION)));
+                    listing.setChannelId(cursor.getInt(cursor.getColumnIndex(COLUMN_LISTING_CHANNEL_ID)));
+                    listings.add(listing);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            db.close();
+        }
+        return listings;
+    }
+
+    public List<TvChannel> getChannelsOfCategory(Integer categoryId) {
+        List<TvChannel> tvChannels = new ArrayList<>();
+        Log.d("myLog", "getChannelsForCategory" + categoryId);
+        Cursor cursor = mContext.getContentResolver().query(
+                TvChannelContract.ChannelEntry.CONTENT_URI,
+                TvChannelContract.ChannelEntry.FULL_PROJECTION,
+                COLUMN_CHANNEL_CATEGORY_ID + "=?",
+                new String[]{String.valueOf(categoryId)},
+                null);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    TvChannel tvChannel = new TvChannel();
+                    tvChannel.setName(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_NAME)));
+                    tvChannel.setPicture(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_PICTURE)));
+                    tvChannel.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_ID)));
+                    tvChannel.setIsFavorite(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_FAVORITE)));
+                    tvChannel.setUrl(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_URL)));
+                    String categoryName = getCategoryForChannel(cursor.getInt(cursor.getColumnIndex(COLUMN_CHANNEL_CATEGORY_ID)));
+                    tvChannel.setCategory_name(categoryName);
+                    tvChannels.add(tvChannel);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+        }
+        Log.d("myLog", "getChannelsForCategory");
+        return tvChannels;
+    }
 }
+
+//
+//    public List<TvListing> getSortedListing2(String channel_name, String forDate) {
+//        List<TvListing> listings = new ArrayList<>();
+//        TvChannelDbHelper tvDb = TvChannelDbHelper.getInstance(mContext);
+//        SQLiteDatabase db = tvDb.getWritableDatabase();
+//        String sqlQuery = "select time, date, title, " +
+//                "description, channel.name from listing  " +
+//                "join  channel on listing.channel_id=" +
+//                "channel._id where date='?' and  " +
+//                "channel.name='?'";
+//        Cursor cursor = db.rawQuery(sqlQuery, new String[]{forDate,channel_name});
+//        if (cursor != null) {
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    TvListing listing = new TvListing();
+//                    listing.setDate(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_DATE)));
+//                    listing.setTime(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_TIME)));
+//                    listing.setTitle(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_TITLE)));
+//                    listing.setDescription(cursor.getString(cursor.getColumnIndex(COLUMN_LISTING_DESCRIPTION)));
+//                    listing.setChannelId(cursor.getInt(cursor.getColumnIndex(COLUMN_LISTING_CHANNEL_ID)));
+//
+//                    String channelName = getChannelNames(cursor.getString(cursor.getColumnIndex(COLUMN_CHANNEL_CATEGORY_ID)));
+//
+//                    listings.add(listing);
+//                } while (cursor.moveToNext());
+//            }
+//            cursor.close();
+//            db.close();
+//        }
+//        return listings;
+//    }
+//}

@@ -1,4 +1,4 @@
-package com.vasskob.tvchannels.ui;
+package com.vasskob.tvchannels.ui.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import com.vasskob.tvchannels.R;
 import com.vasskob.tvchannels.data.DbFunction;
 import com.vasskob.tvchannels.model.TvListing;
-import com.vasskob.tvchannels.ui.adapter.Recycler_View_Adapter;
+import com.vasskob.tvchannels.ui.adapter.Listing_R_V_Adapter;
 
 import java.util.List;
 
@@ -60,9 +60,9 @@ public class ListingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.list_fragment, container, false);
+        rootView = inflater.inflate(R.layout.container_layout, container, false);
 
-        rv = (RecyclerView) rootView.findViewById(R.id.listing_r_view);
+        rv = (RecyclerView) rootView.findViewById(R.id.container_rv);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         position = this.getArguments().getInt(ARG_POSITION_NUMBER);
 
@@ -99,7 +99,7 @@ public class ListingFragment extends Fragment {
         @Override
         protected void onPostExecute(List<TvListing> tvListings) {
             System.out.println(">>>>>>>>>>>>>>>" + position + ">>>>>>>>>>" + this.pickedDate);
-            Recycler_View_Adapter adapter = new Recycler_View_Adapter(tvListing, getActivity());
+            Listing_R_V_Adapter adapter = new Listing_R_V_Adapter(tvListing, getActivity());
             rv.setAdapter(adapter);
         }
     }

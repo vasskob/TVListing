@@ -1,8 +1,10 @@
 package com.vasskob.tvchannels.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +13,9 @@ import android.view.ViewGroup;
 import com.squareup.picasso.Picasso;
 import com.vasskob.tvchannels.R;
 import com.vasskob.tvchannels.model.TvCategory;
-import com.vasskob.tvchannels.model.TvListing;
+import com.vasskob.tvchannels.ui.adapter.holder.Category_View_Holder;
+import com.vasskob.tvchannels.ui.fragment.ChannelFragment;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,6 +24,8 @@ public class Category_R_V_Adapter extends RecyclerView.Adapter<Category_View_Hol
 
     List<TvCategory> tvCategoryList = Collections.emptyList();
     Context context;
+
+    public static final String ARG_CATEGORY_ID = "categoryId";
 
     public Category_R_V_Adapter(List<TvCategory> tvCategoryList, Context context) {
         this.tvCategoryList = tvCategoryList;
@@ -40,21 +42,44 @@ public class Category_R_V_Adapter extends RecyclerView.Adapter<Category_View_Hol
     }
 
     @Override
-    public void onBindViewHolder(Category_View_Holder holder, int position) {
+    public void onBindViewHolder(Category_View_Holder holder, final int position) {
 
-        //  Bitmap logo = loadImageFromServer((tvCategoryList.get(position).getPicture()));
-        //  holder.catLogo.setImageBitmap(logo);
         holder.catTitle.setText(tvCategoryList.get(position).getTitle());
-
         Picasso.with(context)
                 .load((tvCategoryList.get(position).getPicture()))
                 .fit()
                 .centerCrop()
                 .placeholder(R.drawable.muz_pic)
                 .into(holder.catLogo);
-        System.out.println("PICTURE URL " + tvCategoryList.get(position).getPicture() + "!@!!!!!!!!!");
+        System.out.println("PICTURE URL " + tvCategoryList.get(position).getPicture() + " !@!!!!!!!!!");
+
+        holder.catTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment fragment = new ChannelFragment();
+                Bundle bundle = new Bundle();
+                bundle.putInt(ARG_CATEGORY_ID, tvCategoryList.get(position).getId());
+                fragment.setArguments(bundle);
+
+
+                FragmentManager mFragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+                mFragmentManager.popBackStack();
+                Fragment mFragment = mFragmentManager.findFragmentById(R.id.frame_container);
+                if (mFragment == null) {
+                    mFragmentManager.beginTransaction()
+                            .add(R.id.frame_container, fragment)
+                            .commit();
+                } else {
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.frame_container, fragment)
+                            .commit();
+
+                }
+            }
+        });
 
     }
+
 
     @Override
     public int getItemCount() {
@@ -67,28 +92,5 @@ public class Category_R_V_Adapter extends RecyclerView.Adapter<Category_View_Hol
         super.onAttachedToRecyclerView(recyclerView);
     }
 
-    // Insert a new item to the RecyclerView on a predefined position
-    public void insert(int position, TvCategory data) {
-        tvCategoryList.add(position, data);
-        notifyItemInserted(position);
-    }
 
-    // Remove a RecyclerView item containing a specified Data object
-    public void remove(TvListing data) {
-        int position = tvCategoryList.indexOf(data);
-        tvCategoryList.remove(position);
-        notifyItemRemoved(position);
-    }
-
-    public static Bitmap loadImageFromServer(String url) {
-        Bitmap bitmap = null;
-        try {
-            InputStream in = (InputStream) new URL(url).getContent();
-            bitmap = BitmapFactory.decodeStream(in);
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
 }

@@ -1,4 +1,4 @@
-package com.vasskob.tvchannels.ui;
+package com.vasskob.tvchannels.ui.fragment;
 
 
 import android.content.Context;
@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import com.vasskob.tvchannels.R;
 import com.vasskob.tvchannels.data.DbFunction;
 import com.vasskob.tvchannels.model.TvChannel;
-import com.vasskob.tvchannels.ui.adapter.Channel_R_V_adapter;
+import com.vasskob.tvchannels.ui.adapter.Fav_Channel_R_V_adapter;
 
 import java.util.List;
 
@@ -58,9 +58,9 @@ public class FavoriteChFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.channel_fragment, container, false);
+        rootView = inflater.inflate(R.layout.container_layout, container, false);
 
-        rvCategory = (RecyclerView) rootView.findViewById(R.id.channel_r_view);
+        rvCategory = (RecyclerView) rootView.findViewById(R.id.container_rv);
         System.out.println(" RVcategory " + rvCategory + "!!!!!!!!!!!!");
         rvCategory.setLayoutManager(new LinearLayoutManager(getActivity()));
         executeMyTask();
@@ -88,7 +88,7 @@ public class FavoriteChFragment extends Fragment {
         @Override
         protected void onPostExecute(List<TvChannel> tvChannels) {
             System.out.println(">>>>>>>>>>>>>>>" + position + ">>>>>>>>>>");
-            Channel_R_V_adapter adapter = new Channel_R_V_adapter(favoriteTvChannels, getActivity());
+            Fav_Channel_R_V_adapter adapter = new Fav_Channel_R_V_adapter(favoriteTvChannels, getActivity());
             rvCategory.setAdapter(adapter);
 
         }

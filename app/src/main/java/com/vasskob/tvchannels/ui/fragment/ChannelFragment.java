@@ -1,4 +1,4 @@
-package com.vasskob.tvchannels.ui;
+package com.vasskob.tvchannels.ui.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -18,10 +18,14 @@ import com.vasskob.tvchannels.ui.adapter.Channel_R_V_adapter;
 
 import java.util.List;
 
+import static com.vasskob.tvchannels.ui.adapter.Category_R_V_Adapter.ARG_CATEGORY_ID;
+
 
 public class ChannelFragment extends Fragment {
     private static final String ARG_POSITION_NUMBER = "position_number";
     private static final String PICKED_DATE = "picked_date";
+    private int categoryId;
+    private Bundle bundle;
 
     View rootView;
     RecyclerView rvCategory;
@@ -61,17 +65,22 @@ public class ChannelFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.channel_fragment, container, false);
+        rootView = inflater.inflate(R.layout.container_layout, container, false);
 
-        rvCategory = (RecyclerView) rootView.findViewById(R.id.channel_r_view);
+        rvCategory = (RecyclerView) rootView.findViewById(R.id.container_rv);
         System.out.println(" RVcategory " + rvCategory + "!!!!!!!!!!!!");
         rvCategory.setLayoutManager(new LinearLayoutManager(getActivity()));
-        executeMyTask();
+
+        bundle = this.getArguments();
+        if (bundle != null) {
+            categoryId = bundle.getInt(ARG_CATEGORY_ID);
+        }
+        executeMyTask(categoryId);
         return rootView;
     }
 
 
-    private class MyTask extends AsyncTask<Void, Void, List<TvChannel>> {
+    private class MyTask extends AsyncTask<Integer, Void, List<TvChannel>> {
 
 
         public MyTask() {
@@ -79,8 +88,15 @@ public class ChannelFragment extends Fragment {
         }
 
         @Override
-        protected List<TvChannel> doInBackground(Void... params) {
-            tvChannels = dbFunction.getChannels();
+        protected List<TvChannel> doInBackground(Integer... params) {
+
+            if (params[0] == 0) {
+                tvChannels = dbFunction.getChannels();
+            }
+            else {
+                tvChannels = dbFunction.getChannelsOfCategory(params[0]);
+            }
+
             System.out.println("????>???" + tvChannels.size());
             for (int i = 0; i < tvChannels.size(); i++) {
                 System.out.println("Channel PICTURE " + tvChannels.get(i).getPicture() + " !!!!!!!!");
@@ -96,7 +112,7 @@ public class ChannelFragment extends Fragment {
         }
     }
 
-    private void executeMyTask() {
-        new MyTask().execute();
+    private void executeMyTask(int categoryId) {
+        new MyTask().execute(categoryId);
     }
 }

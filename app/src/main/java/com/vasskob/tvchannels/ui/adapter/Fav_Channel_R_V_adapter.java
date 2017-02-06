@@ -17,16 +17,20 @@ import java.util.Collections;
 import java.util.List;
 
 
-public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holder> {
+public class Fav_Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holder> {
 
     List<TvChannel> tvChannels = Collections.emptyList();
     Context context;
     DbFunction dbFunction;
     boolean isFavorite;
 
-    public Channel_R_V_adapter(List<TvChannel> tvChannels, Context context) {
+    boolean[] checkBoxState;
+
+
+    public Fav_Channel_R_V_adapter(List<TvChannel> tvChannels, Context context) {
         this.tvChannels = tvChannels;
         this.context = context;
+        checkBoxState = new boolean[tvChannels.size()];
         this.dbFunction = new DbFunction(context);
     }
 
@@ -49,12 +53,13 @@ public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holde
         holder.channelName.setText(tvChannels.get(position).getName());
         holder.channelCategory.setText(tvChannels.get(position).getCategory_name());
         holder.channelUrl.setText(tvChannels.get(position).getUrl());
-
+//
         if (tvChannels.get(position).getIsFavorite() == 1) {
             isFavorite = true;
         } else {
             isFavorite = false;
         }
+
 
         holder.favoriteButton.setFavorite(isFavorite, false);
 
@@ -70,12 +75,15 @@ public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holde
                 if (favorite) {
                     dbFunction.markAsFavoriteInDb(tvChannels.get(position).getName(), 1);
 
-                } else {
+                 } else {
+//
                     dbFunction.markAsFavoriteInDb(tvChannels.get(position).getName(), 0);
-
+                    remove(tvChannels.get(holder.getAdapterPosition()));
+                    notifyItemRemoved(holder.getAdapterPosition());
+                    notifyItemRangeChanged(holder.getAdapterPosition(), tvChannels.size());
 
                 }
-                System.out.println("FAVORITE BUTTON PRESSED on position" + position);
+
             }
         });
     }

@@ -20,7 +20,7 @@ import com.vasskob.tvchannels.MainActivity;
 import com.vasskob.tvchannels.R;
 import com.vasskob.tvchannels.data.DataLoader;
 
-public class SplashActivity extends AppCompatActivity {
+public class LoadingActivity extends AppCompatActivity {
     private final static String TAG = "myLog";
 
     LVBlock lvBlock;
@@ -32,7 +32,7 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.splash_activity);
+        setContentView(R.layout.activity_load);
         lvBlock = (LVBlock) (findViewById(R.id.lv_block));
         startAnim(lvBlock);
 
@@ -51,15 +51,15 @@ public class SplashActivity extends AppCompatActivity {
 
             SharedPreferences sP = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
             if (sP.getString("picked_date", null) == null) {
-                dataLoader.loadData();
-               if (dataLoader.dataIsLoaded) {
-                   finish();
-                   System.out.println(" SplashActivity is Finished DATA is Loaded");
-
-               }
+//                dataLoader.loadData();
+//               if (dataLoader.dataIsLoaded) {
+//                   finish();
+//                   System.out.println(" SplashActivity is Finished DATA is Loaded");
+//
+//               }
 //                dataLoader.loadData();
 //                ListingForMonthService.startService(getApplicationContext(),true);
-             //   runMyTask();
+                runMyTask();
             } else {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);

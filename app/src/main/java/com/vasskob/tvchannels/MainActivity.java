@@ -248,16 +248,30 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-        String date = dayOfMonth + "/" + monthOfYear + 1 + "/" + year;
+        String date;
+        String day;
+        String month;
+        // Need to convert date in /dd/MM/yyyy format, now we have /d/m-1/yyyy
+        if (dayOfMonth < 10) {
+            day = "0" + dayOfMonth;
+        } else {
+            day = String.valueOf(dayOfMonth);
+        }
+        if (monthOfYear < 9) {
+            month = "0" + (monthOfYear + 1);
+        } else {
+            month = String.valueOf(monthOfYear);
+        }
+
+        date = day + "/" + month + "/" + year;
         calendarView.setImageResource(getIconId(dayOfMonth));
+        System.out.println("OnDATACLICK " + date + "!!!!!!!!!");
 
         SharedPreferences.Editor editor = sharedpreferences.edit();
         editor.putString("picked_date", date);
         editor.apply();
 
-//        tabTitlesForDay = dbFunction.getChannelListing(,date);
         setupViewPager(viewPager, tabTitles);
-
 
     }
 

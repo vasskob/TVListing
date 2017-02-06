@@ -41,10 +41,6 @@
 
         </activity>
 
-        <service
-            android:name=".service.ListingForMonthService"
-            android:exported="false" />
-
         <provider
             android:name="com.vasskob.tvchannels.data.TvChannelProvider"
             android:authorities="com.vasskob.tvchannels"

@@ -18,11 +18,13 @@ import com.vasskob.tvchannels.ui.adapter.Listing_R_V_Adapter;
 
 import java.util.List;
 
+import static com.vasskob.tvchannels.Constants.ARG_POSITION_NUMBER;
+import static com.vasskob.tvchannels.Constants.IS_SORTED;
+import static com.vasskob.tvchannels.Constants.PICKED_DATE;
+
 
 public class ListingFragment extends Fragment {
-    private static final String ARG_POSITION_NUMBER = "position_number";
-    private static final String IS_SORTED = "is_sorted";
-    private static final String PICKED_DATE = "picked_date";
+
 
     View rootView;
     List<TvListing> tvListing;
@@ -37,14 +39,12 @@ public class ListingFragment extends Fragment {
     boolean isSorted;
 
 
-    @Override
-    public void onAttach(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        this.dbFunction = new DbFunction(context);
-        this.picked_date = sp.getString(PICKED_DATE, null);
-        // Toast.makeText(context, " Chared PREFFS is " + picked_date, Toast.LENGTH_LONG).show();
-        super.onAttach(context);
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//
+//        // Toast.makeText(context, " Chared PREFFS is " + picked_date, Toast.LENGTH_LONG).show();
+//        super.onAttach(context);
+//    }
 
     public static Fragment newInstance(int position, String picked_date, boolean isSorted) {
         ListingFragment fragment = new ListingFragment();
@@ -66,6 +66,9 @@ public class ListingFragment extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         position = this.getArguments().getInt(ARG_POSITION_NUMBER);
 
+        SharedPreferences sp = getContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        this.dbFunction = new DbFunction(getContext());
+        this.picked_date = sp.getString(PICKED_DATE, null);
         executeMyTask();
         return rootView;
     }
@@ -82,23 +85,24 @@ public class ListingFragment extends Fragment {
 
         @Override
         protected List<TvListing> doInBackground(Void... params) {
-            if (isSorted) {
-                tvListing = dbFunction.getSortedListing(dbFunction.getChannelNames("name ASC").get(position),this.pickedDate);
+//            if (isSorted) {
+//                tvListing = dbFunction.getSortedListing(dbFunction.getChannelNames("name ASC").get(position),this.pickedDate);
+//
+//            }
+//            else {
+                tvListing = dbFunction.getChannelListing(String.valueOf(position), this.pickedDate);
 
-            }
-            else { tvListing = dbFunction.getChannelListing(String.valueOf(position), this.pickedDate);
-
-            }
-            System.out.println("????>???" + tvListing.size());
-            for (int i = 0; i < tvListing.size(); i++) {
-                System.out.println("????>???" + tvListing.get(i));
-            }
+            //}
+//            System.out.println("????>???" + tvListing.size());
+//            for (int i = 0; i < tvListing.size(); i++) {
+//                System.out.println("????>???" + tvListing.get(i));
+//            }
             return tvListing;
         }
 
         @Override
         protected void onPostExecute(List<TvListing> tvListings) {
-            System.out.println(">>>>>>>>>>>>>>>" + position + ">>>>>>>>>>" + this.pickedDate);
+          //  System.out.println(">>>>>>>>>>>>>>>" + position + ">>>>>>>>>>" + this.pickedDate);
             Listing_R_V_Adapter adapter = new Listing_R_V_Adapter(tvListing, getActivity());
             rv.setAdapter(adapter);
         }

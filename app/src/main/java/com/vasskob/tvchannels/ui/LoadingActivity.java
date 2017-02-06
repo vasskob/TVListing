@@ -8,12 +8,14 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ldoublem.loadingviewlib.view.LVBlock;
 import com.vasskob.tvchannels.MainActivity;
@@ -26,6 +28,7 @@ public class LoadingActivity extends AppCompatActivity {
     LVBlock lvBlock;
     public static boolean close = false;
     DataLoader dataLoader;
+    Handler handler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,14 +55,23 @@ public class LoadingActivity extends AppCompatActivity {
             SharedPreferences sP = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
             if (sP.getString("picked_date", null) == null) {
 //                dataLoader.loadData();
-//               if (dataLoader.dataIsLoaded) {
-//                   finish();
-//                   System.out.println(" SplashActivity is Finished DATA is Loaded");
-//
-//               }
 //                dataLoader.loadData();
 //                ListingForMonthService.startService(getApplicationContext(),true);
                 runMyTask();
+
+                handler.postDelayed(handlerRunnable, 1000);
+
+//                finish();
+//
+//                while (true) {
+//                    if (dataLoader.getCallCount() == 10)
+//                        finish();
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             } else {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
@@ -73,9 +85,23 @@ public class LoadingActivity extends AppCompatActivity {
             Snackbar.make(findViewById(R.id.splash_container), "Please connect to Internet for loading data", Snackbar.LENGTH_LONG)
                     .show();
         }
-
-
     }
+
+
+    private Runnable handlerRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Toast.makeText(getApplication().getBaseContext(),"WHAT YOU WANT TO WRITE? "+dataLoader.getCallCount() ,Toast.LENGTH_LONG).show();
+            if (dataLoader.getCallCount() != dataLoader.days){
+                handler.postDelayed(this, 1000);
+            } else{
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+
+            }
+        }
+    };
 
     private void runMyTask() {
         new MyTask().execute();
@@ -122,6 +148,8 @@ public class LoadingActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
+            System.out.println(">>>>>>>>>>>>>>>>>>>>>" + dataLoader.getCallCount());
          //  ListingForMonthService.startService(getApplicationContext(), true);
         }
     }

@@ -1,6 +1,9 @@
 # TVListing
 Simple REST API loader/parser app
+
+<br />
 TASKS : 
+<br />
  Data are loaded asynchronously and are written in a local SQL database and are shown to a user from there.  DONE
  Firstly, you should download program schedule for today, then for a week/month.    DONE FOR 1DAY
 * Optionally. Manual database synchronization.  NOT

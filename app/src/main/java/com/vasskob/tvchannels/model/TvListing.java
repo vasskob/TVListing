@@ -80,7 +80,7 @@ public class TvListing {
         if (other == this) {
             return true;
         }
-        if ((other instanceof TvListing) == false) {
+        if (!(other instanceof TvListing)) {
             return false;
         }
         TvListing rhs = ((TvListing) other);

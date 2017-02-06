@@ -21,7 +21,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar">
 
-        <!-- the layout which will be the content of the activity (which will be hosted inside the drawer (NOT the list of the drawer)) -->
+        <!-- the layout which will be the content of the activity (which will be hosted inside the drawer (NOT the tvCategoryList of the drawer)) -->
         <FrameLayout
             android:id="@+id/frame_container"
             android:layout_width="match_parent"

@@ -24,6 +24,12 @@ public class TvChannel {
     @SerializedName("category_id")
     @Expose
     private Integer categoryId;
+    @SerializedName("category_name")
+    @Expose
+    private String category_name;
+    @SerializedName("is_favorite")
+    @Expose
+    private int isFavorite;
 
     public Integer getId() {
         return id;
@@ -65,6 +71,22 @@ public class TvChannel {
         this.categoryId = categoryId;
     }
 
+    public String getCategory_name() {
+        return category_name;
+    }
+
+    public void setCategory_name(String category_name) {
+        this.category_name = category_name;
+    }
+
+    public int getIsFavorite() {
+        return isFavorite;
+    }
+
+    public void setIsFavorite(int isFavorite) {
+        this.isFavorite = isFavorite;
+    }
+
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -75,16 +97,5 @@ public class TvChannel {
         return new HashCodeBuilder().append(id).append(name).append(url).append(picture).append(categoryId).toHashCode();
     }
 
-//    @Override
-//    public boolean equals(Object other) {
-//        if (other == this) {
-//            return true;
-//        }
-//        if ((other instanceof TvChannel) == false) {
-//            return false;
-//        }
-//        TvChannel rhs = ((TvChannel) other);
-//        return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(url, rhs.url).append(picture, rhs.picture).append(categoryId, rhs.categoryId).isEquals();
-//    }
 
 }

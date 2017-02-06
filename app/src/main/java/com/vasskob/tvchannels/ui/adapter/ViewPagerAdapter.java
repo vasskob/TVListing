@@ -1,5 +1,7 @@
 package com.vasskob.tvchannels.ui.adapter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -9,17 +11,24 @@ import com.vasskob.tvchannels.ui.ListingFragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class ViewPagerAdapter extends FragmentPagerAdapter {
+    Context context;
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
+    boolean isSorted;
 
-    public ViewPagerAdapter(FragmentManager manager) {
+    public ViewPagerAdapter(FragmentManager manager, Context context, boolean isSorted) {
         super(manager);
+        this.context = context;
+        this.isSorted=isSorted;
     }
 
     @Override
     public Fragment getItem(int position) {
-        return ListingFragment.newInstance(position+1);
+                SharedPreferences prefs = context.getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        return ListingFragment.newInstance(position + 1, prefs.getString("picked_date", null),isSorted);
     }
 
     @Override

@@ -165,7 +165,8 @@ public class TvChannelContract {
                 COLUMN_LISTING_DATE,
                 COLUMN_LISTING_TIME,
                 COLUMN_LISTING_TITLE,
-                COLUMN_LISTING_CHANNEL_ID};
+                COLUMN_LISTING_CHANNEL_ID,
+                COLUMN_LISTING_DESCRIPTION};
     }
 
 

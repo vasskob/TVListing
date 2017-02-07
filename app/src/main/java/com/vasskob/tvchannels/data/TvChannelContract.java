@@ -18,11 +18,6 @@ class TvChannelContract {
     // the content provider.
     private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    // Possible paths (appended to base content URI for possible URI's)
-    // For instance, content://com.example.android.sunshine.app/weather/ is a valid path for
-    // looking at weather data. content://com.example.android.sunshine.app/givemeroot/ will fail,
-    // as the ContentProvider hasn't been given any information on what to do with "givemeroot".
-    // At least, let's hope not.  Don't be that dev, reader.  Don't be that dev.
     private static final String PATH_CATEGORY = "category";
     private static final String PATH_CHANNEL = "channel";
     private static final String PATH_LISTING = "listing";
@@ -40,19 +35,15 @@ class TvChannelContract {
                 ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_CATEGORY;
 
 
-        // Table name
+
         public static final String TABLE_NAME = "category";
 
-        // The location setting string is what will be sent to openweathermap
-        // as the location query.
         public static final String COLUMN_CATEGORY_ID = "_id";
 
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
+
         public static final String COLUMN_CATEGORY_TITLE = "title";
 
-        // In order to uniquely pinpoint the location on the map when we launch the
-        // map intent, we store the latitude and longitude as returned by openweathermap.
+
         public static final String COLUMN_CATEGORY_PICTURE = "picture";
 
         public static final String DEFAULT_ORDER = TABLE_NAME + "." + COLUMN_CATEGORY_ID + ","
@@ -69,7 +60,7 @@ class TvChannelContract {
                 COLUMN_CATEGORY_PICTURE};
     }
 
-    /* Inner class that defines the table contents of the weather table */
+    /* Inner class that defines the table contents of the channel table */
     public static final class ChannelEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -82,17 +73,14 @@ class TvChannelContract {
 
         public static final String TABLE_NAME = "channel";
 
-        // Column with the foreign key into the location table.
-        public static final String COLUMN_CHANNEL_ID = "_id";
-        // Date, stored as long in milliseconds since the epoch
+         public static final String COLUMN_CHANNEL_ID = "_id";
+
         public static final String COLUMN_CHANNEL_NAME = "name";
-        // Weather id as returned by API, to identify the icon to be used
+
         public static final String COLUMN_CHANNEL_URL = "url";
 
-        // Short description and long description of the weather, as provided by API.
-        public static final String COLUMN_CHANNEL_PICTURE = "picture";
+       public static final String COLUMN_CHANNEL_PICTURE = "picture";
 
-        // Min and max temperatures for the day (stored as floats)
         public static final String COLUMN_CHANNEL_CATEGORY_ID = "category_id";
 
         public static final String COLUMN_CHANNEL_FAVORITE = "is_favorite";
@@ -116,7 +104,7 @@ class TvChannelContract {
                 COLUMN_CHANNEL_NAME};
     }
 
-    /* Inner class that defines the table contents of the location table */
+    /* Inner class that defines the table contents of the listing table */
     public static final class ListingEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -130,24 +118,16 @@ class TvChannelContract {
         // Table name
         public static final String TABLE_NAME = "listing";
 
-        // The location setting string is what will be sent to openweathermap
-        // as the location query.
-        public static final String COLUMN_LISTING_ID = "_id";
+         public static final String COLUMN_LISTING_ID = "_id";
 
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
         public static final String COLUMN_LISTING_DATE = "date";
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
+
         public static final String COLUMN_LISTING_TIME = "time";
-        // Human readable location string, provided by the API.  Because for styling,
-        // "Mountain View" is more recognizable than 94043.
+
         public static final String COLUMN_LISTING_TITLE = "title";
 
         public static final String COLUMN_LISTING_CHANNEL_ID = "channel_id";
 
-        // In order to uniquely pinpoint the location on the map when we launch the
-        // map intent, we store the latitude and longitude as returned by openweathermap.
         public static final String COLUMN_LISTING_DESCRIPTION = "description";
 
 //        public static final String DEFAULT_ORDER = TABLE_NAME + "." + COLUMN_LISTING_CHANNEL_ID + ","

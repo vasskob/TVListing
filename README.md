@@ -5,8 +5,8 @@ Simple REST API loader/parser app
 TASKS : 
 <br />
  Data are loaded asynchronously and are written in a local SQL database and are shown to a user from there.  DONE
- Firstly, you should download program schedule for today, then for a week/month.    DONE FOR 1DAY
-* Optionally. Manual database synchronization.  NOT
+ Firstly, you should download program schedule for today, then for a week/month.    DONE (partly)
+* Optionally. Manual database synchronization.  DONE
 * Optionally. Automatically synchronize data for today several times a day.  NOT
 * Optionally Show a progress of download/synchronization.  NOT
 * Optionally Show Notification while loading.  NOT
@@ -15,7 +15,7 @@ TASKS :
   On the main screen of the application is located TabLayout with channel titles and ViewPager with programs for these channels. The program is displayed for today by default. DONE
 * Optionally ability to select a date for which a TV schedule is shown. DONE
 * Optionally select channels which are preferred on TV schedule page. DONE
-* Optionally sort the list of channels on the main screen. NOT
+* Optionally sort the list of channels on the main screen. DONE (not for schedule yet)
 
 Menu includes the following items:  DONE
 list of categories;  

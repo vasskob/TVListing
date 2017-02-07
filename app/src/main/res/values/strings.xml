@@ -1,22 +1,21 @@
 <resources>
-    <string name="app_name">TV Listing</string>
-    <string name="calendar_logo">Calendar</string>
+    <string name="app_name">ТВ программа</string>
+    <string name="calendar_logo">Календар</string>
     <string name="app_github">GitHub</string>
-    <string name="app_github_url"><![CDATA[https://github.com/vasskob]]></string>
-    <string name="categories">Categories</string>
-    <string name="channels">Channels</string>
-    <string name="favorites">Favorite ch.</string>
-    <string name="other">Other</string>
-    <string name="update">Update Listing</string>
-    <string name="about">About</string>
-    <string name="about_txt">This application is create special for Boost Solution teem. </string>
-    <string name="sort">Sort Channel</string>
-    <string name="channel_logo">Channel Logo</string>
-    <string name="category_name">Category Name</string>
-    <string name="category">Tv Categories</string>
-    <string name="channel_name">Channel Name</string>
-    <string name="channel_url">Channel URL</string>
-    <string name="channel_category_name">Channel Category</string>
-    <string name="loading_data_complite">Data are loaded for %1$s days</string>
+    <string name="app_github_url"><![CDATA[https://github.com/vasskob/TVListing]]></string>
+    <string name="categories">Категорії</string>
+    <string name="channels">Канали</string>
+    <string name="favorites">Улюблені канали</string>
+    <string name="other">Додатково</string>
+    <string name="update">Обновити</string>
+    <string name="about">Про додаток</string>
+    <string name="about_txt">Ця апка створена спеціально для boost.solutions і Uzhgorod IT community</string>
+    <string name="sort">Сортувати</string>
+    <string name="channel_logo">Лого Канала</string>
+    <string name="category_name">Назва категорії</string>
+    <string name="category">Тв Категорії</string>
+    <string name="channel_name">Назва каналу</string>
+    <string name="channel_url">URL каналу</string>
+    <string name="channel_category_name">Категорія каналу</string>
 
 </resources>

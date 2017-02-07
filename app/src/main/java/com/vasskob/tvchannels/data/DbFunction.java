@@ -29,9 +29,10 @@ import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_
 import static com.vasskob.tvchannels.data.TvChannelContract.ListingEntry.COLUMN_LISTING_TITLE;
 
 
+@SuppressWarnings("CanBeFinal")
 public class DbFunction {
 
-    private Context mContext;
+    private final Context mContext;
     //private TvChannelDbHelper mDbHelper;
 
     public DbFunction(Context context) {
@@ -142,7 +143,7 @@ public class DbFunction {
      *
      * @param channel_Id - id of channel listing for
      * @param forDate    -   date of channel listing
-     * @return
+     * @return teturn List of TvListing for channel for date
      */
     public List<TvListing> getChannelListing(String channel_Id, String forDate) {
         List<TvListing> listings = new ArrayList<>();
@@ -162,7 +163,6 @@ public class DbFunction {
                 int timeColIndex = cursor.getColumnIndex(COLUMN_LISTING_TIME);
                 int titleColIndex = cursor.getColumnIndex(COLUMN_LISTING_TITLE);
                 int chnIdIndex = cursor.getColumnIndex(COLUMN_LISTING_DESCRIPTION);
-                System.out.println(String.format(">>%d>>%d>>%d>>%d>>%d", idColIndex, dateColIndex, timeColIndex, titleColIndex, chnIdIndex));
 
                 do {
                     TvListing listing = new TvListing();
@@ -263,7 +263,7 @@ public class DbFunction {
      * @param id of category to
      * @return category name
      */
-    public String getCategoryForChannel(int id) {
+    private String getCategoryForChannel(int id) {
 
         String categoryName = "category";
         Cursor cursor = mContext.getContentResolver().query(
@@ -281,14 +281,14 @@ public class DbFunction {
 
     }
 
-    /**
-     * @param channelName
-     * @param checked
+    /** Mark Channel as favorite
+     * @param channelName by name
+     * @param checked by tag (0 or 1)
      */
     public void markAsFavoriteInDb(String channelName, int checked) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_CHANNEL_FAVORITE, checked);
-        int k = mContext.getContentResolver().update(TvChannelContract.ChannelEntry.CONTENT_URI,
+        mContext.getContentResolver().update(TvChannelContract.ChannelEntry.CONTENT_URI,
                 values,
                 // COLUMN_CHANNEL_ID + " = ?",
                 COLUMN_CHANNEL_NAME + " = ?",

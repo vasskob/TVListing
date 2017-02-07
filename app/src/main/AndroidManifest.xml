@@ -14,28 +14,29 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:parentActivityName=".MainActivity"
+            android:name=".ui.MainActivity"
+            android:parentActivityName=".ui.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MaterialDrawerTheme.Light.DarkToolbar">
+            android:theme="@style/MaterialDrawerTheme.Light.DarkToolbar"
+           >
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.vasskob.tvchannels.MainActivity" />
+                android:value="com.vasskob.tvchannels.ui.MainActivity" />
 
         </activity>
         <activity
             android:name=".ui.AboutActivity"
-            android:parentActivityName="com.vasskob.tvchannels.MainActivity"
-            android:screenOrientation="portrait">
+            android:parentActivityName="com.vasskob.tvchannels.ui.MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
         </activity>
         <activity
             android:name=".ui.LoadingActivity"
-            android:theme="@style/Theme.Design.NoActionBar">>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 

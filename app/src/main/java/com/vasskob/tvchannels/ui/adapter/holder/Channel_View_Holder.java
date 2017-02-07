@@ -13,16 +13,15 @@ import com.vasskob.tvchannels.R;
 public class Channel_View_Holder extends RecyclerView.ViewHolder {
 
 
-    private CardView channelCv;
-    public TextView channelName;
-    public TextView channelCategory;
-    public TextView channelUrl;
-    public ImageView channelLogo;
-    public MaterialFavoriteButton favoriteButton;
+    public final TextView channelName;
+    public final TextView channelCategory;
+    public final TextView channelUrl;
+    public final ImageView channelLogo;
+    public final MaterialFavoriteButton favoriteButton;
 
     public Channel_View_Holder(View itemView) {
         super(itemView);
-        channelCv = (CardView) itemView.findViewById(R.id.channel_card_view);
+        CardView channelCv = (CardView) itemView.findViewById(R.id.channel_card_view);
         channelName = (TextView) itemView.findViewById(R.id.channel_name);
         channelCategory = (TextView) itemView.findViewById(R.id.channel_category_name);
         channelUrl = (TextView) itemView.findViewById(R.id.channel_url);

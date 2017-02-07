@@ -1,4 +1,4 @@
-package com.vasskob.tvchannels;
+package com.vasskob.tvchannels.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -22,10 +22,9 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.ogaclejapan.smarttablayout.SmartTabLayout;
+import com.vasskob.tvchannels.R;
+import com.vasskob.tvchannels.data.DataLoader;
 import com.vasskob.tvchannels.data.DbFunction;
-import com.vasskob.tvchannels.model.TvListing;
-import com.vasskob.tvchannels.ui.AboutActivity;
-import com.vasskob.tvchannels.ui.LoadingActivity;
 import com.vasskob.tvchannels.ui.adapter.ViewPagerAdapter;
 import com.vasskob.tvchannels.ui.fragment.CategoryFragment;
 import com.vasskob.tvchannels.ui.fragment.ChannelFragment;
@@ -41,25 +40,17 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
-    public boolean isSorted = false;
     private Drawer result = null;
-    private Toolbar toolbar;
     private SmartTabLayout tabLayout;
     private ViewPager viewPager;
-    private int dayOfMonth;
-    DatePickerDialog dpd;
+    private DatePickerDialog dpd;
+    @SuppressWarnings("WeakerAccess")
+    private final
     DbFunction dbFunction = new DbFunction(this);
-    List<String> tabTitles;
-    List<String> newTabTitles;
-    List<String> tabTitlesForDayes;
-    List<TvListing> tvListing;
-    ListingFragment listingFragment;
-    CategoryFragment categoryFragment;
-    ChannelFragment channelFragment;
-    FavoriteChFragment favoriteChFragment;
-    SharedPreferences sharedpreferences;
-    ImageView calendarView;
-    TextView customTitle;
+    private List<String> tabTitles;
+    private SharedPreferences shPr;
+    private ImageView calendarView;
+    private TextView customTitle;
 
 
     @Override
@@ -67,24 +58,27 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        final Calendar currentDate = Calendar.getInstance();
         final Calendar lastDay = Calendar.getInstance();
-        dayOfMonth = lastDay.get(Calendar.DAY_OF_MONTH);
+        //int dayOfMonth = lastDay.get(Calendar.DAY_OF_MONTH);
         lastDay.add(Calendar.DAY_OF_MONTH, lastDay.getActualMaximum(Calendar.DAY_OF_MONTH) - lastDay.get(Calendar.DAY_OF_MONTH));
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
         String date = sdf.format(new Date());
 
-        sharedpreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        if (sharedpreferences.getString("picked_date", null) == null) {
-            SharedPreferences.Editor editor = sharedpreferences.edit();
+        shPr = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        if (shPr.getString("picked_date", null) == null) {
+            SharedPreferences.Editor editor = shPr.edit();
             editor.putString("picked_date", date);
+            if (shPr.getInt("date_for_calendar_icon", 0) == 0)
+                editor.putInt("date_for_calendar_icon", currentDate.get(Calendar.DAY_OF_MONTH));
             editor.apply();
         }
 
 
-
         // Custom toolBar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         View customToolbar = View.inflate(this, R.layout.castom_toolbar, null);
         customTitle = (TextView) customToolbar.findViewById(R.id.custom_title_text);
@@ -100,8 +94,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         //Calendar picker
         calendarView = (ImageView) customToolbar.findViewById(R.id.custom_view);
-       // calendarView.setImageDrawable(getResources().getDrawable(getIconId(dayOfMonth)));
-       calendarView.setImageResource(getIconId(dayOfMonth));
+
+        System.out.println(" CALENDAR ICON " + shPr.getInt("date_for_calendar_icon", 0));
+        calendarView.setImageResource(getIconId(shPr.getInt("date_for_calendar_icon", 0)));
+        //calendarView.setImageResource(getIconId(dayOfMonth));
         calendarView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -157,9 +153,10 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
                             } else if (id == 4) {
                                 runFavoriteChFragment();
                             } else if (id == 6) {
-                                sortListing(true);
+                                sortListing();
                             } else if (id == 7) {
-                                intent = new Intent(MainActivity.this, AboutActivity.class);
+                                DataLoader dataLoader = new DataLoader(getApplicationContext());
+                                dataLoader.manualUpdate();
                             } else if (id == 8) {
                                 openGitHub();
                             } else if (id == 9) {
@@ -178,18 +175,9 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     }
 
-    private void sortListing(boolean sorted) {
+    private void sortListing() {
 
-        Calendar cal = Calendar.getInstance();
-        SimpleDateFormat mFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
-
-        if (sorted) {
-            newTabTitles = dbFunction.getChannelNames("name ASC");
-
-        } else {
-
-            newTabTitles = dbFunction.getChannelNames(null);
-        }
+        List<String> newTabTitles = dbFunction.getChannelNames("name ASC");
         setupViewPager(viewPager, newTabTitles);
         tabLayout.setViewPager(viewPager);
     }
@@ -197,10 +185,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     private void setupViewPager(ViewPager viewPager, List<String> titles) {
 
+        boolean isSorted = false;
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), this, isSorted);
 
         for (int i = 0; i < titles.size(); i++) {
-            listingFragment = new ListingFragment();
+            ListingFragment listingFragment = new ListingFragment();
             adapter.addFrag(listingFragment, titles.get(i));
         }
         viewPager.setAdapter(adapter);
@@ -208,14 +197,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
     private void runListingFragment() {
         finish();
-        Intent intent = new Intent(this,MainActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
-      //  sortListing(false);
     }
 
     // RUN Fragments
     private void runCategoryFragment() {
-        categoryFragment = new CategoryFragment();
+        CategoryFragment categoryFragment = new CategoryFragment();
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStack();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -226,9 +214,8 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void runChannelFragment() {
-        channelFragment = new ChannelFragment();
+        ChannelFragment channelFragment = new ChannelFragment();
         FragmentManager fm = getSupportFragmentManager();
-        fm.popBackStack();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.frame_container, channelFragment);
         transaction.commit();
@@ -236,12 +223,11 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
     }
 
     private void runFavoriteChFragment() {
-        favoriteChFragment = new FavoriteChFragment();
+        FavoriteChFragment favoriteChFragment = new FavoriteChFragment();
         FragmentManager fm = getSupportFragmentManager();
         fm.popBackStack();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.replace(R.id.frame_container, favoriteChFragment);
-      //  transaction.addToBackStack("FAV_CHANNEL_FRAGMENT_TAG");
         transaction.commit();
         customTitle.setText(getResources().getString(R.string.favorites));
     }
@@ -265,14 +251,13 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
 
         date = day + "/" + month + "/" + year;
         calendarView.setImageResource(getIconId(dayOfMonth));
-        System.out.println("OnDATACLICK " + date + "!!!!!!!!!");
 
-        SharedPreferences.Editor editor = sharedpreferences.edit();
+        SharedPreferences.Editor editor = shPr.edit();
         editor.putString("picked_date", date);
+        editor.putInt("date_for_calendar_icon", dayOfMonth);
         editor.apply();
 
         setupViewPager(viewPager, tabTitles);
-
     }
 
     private void openGitHub() {
@@ -305,12 +290,6 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         }
 
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        //sortListing();
-//    }
 
 
 }

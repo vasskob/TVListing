@@ -26,7 +26,7 @@ public class TvChannelProvider extends BaseContentProvider {
     private static final String TYPE_CURSOR_ITEM = "vnd.android.cursor.item/";
     private static final String TYPE_CURSOR_DIR = "vnd.android.cursor.dir/";
 
-    public static final String AUTHORITY = "com.vasskob.tvchannels";
+    private static final String AUTHORITY = "com.vasskob.tvchannels";
     // /public static final String CONTENT_URI_BASE = "content://" + AUTHORITY;
 
     private static final int URI_TYPE_CATEGORIES = 0;

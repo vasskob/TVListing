@@ -19,10 +19,9 @@ import java.util.List;
 
 public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holder> {
 
-    List<TvChannel> tvChannels = Collections.emptyList();
-    Context context;
-    DbFunction dbFunction;
-    boolean isFavorite;
+    private List<TvChannel> tvChannels = Collections.emptyList();
+    private final Context context;
+    private final DbFunction dbFunction;
 
     public Channel_R_V_adapter(List<TvChannel> tvChannels, Context context) {
         this.tvChannels = tvChannels;
@@ -41,20 +40,12 @@ public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holde
 
     @Override
     public void onBindViewHolder(final Channel_View_Holder holder, final int position) {
-//
-//  if (tvChannels.isEmpty()) {
-//            Toast.makeText(context, " Favorite list is empty" + tvChannels.toString(), Toast.LENGTH_LONG).show();
-//        }
 
         holder.channelName.setText(tvChannels.get(position).getName());
         holder.channelCategory.setText(tvChannels.get(position).getCategory_name());
         holder.channelUrl.setText(tvChannels.get(position).getUrl());
 
-        if (tvChannels.get(position).getIsFavorite() == 1) {
-            isFavorite = true;
-        } else {
-            isFavorite = false;
-        }
+        boolean isFavorite = tvChannels.get(position).getIsFavorite() == 1;
 
         holder.favoriteButton.setFavorite(isFavorite, false);
 
@@ -62,7 +53,6 @@ public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holde
                 .load((tvChannels.get(position).getPicture()))
                 .placeholder(R.drawable.channel_pic)
                 .into(holder.channelLogo);
-        System.out.println("PICTURE URL " + tvChannels.get(position).getPicture() + "!@!!!!!!!!!");
 
         holder.favoriteButton.setOnFavoriteChangeListener(new MaterialFavoriteButton.OnFavoriteChangeListener() {
             @Override
@@ -72,8 +62,6 @@ public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holde
 
                 } else {
                     dbFunction.markAsFavoriteInDb(tvChannels.get(position).getName(), 0);
-
-
                 }
                 System.out.println("FAVORITE BUTTON PRESSED on position" + position);
             }
@@ -87,16 +75,5 @@ public class Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holde
         return tvChannels.size();
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    // Remove a RecyclerView item containing a specified Data object
-    public void remove(TvChannel data) {
-        int position = tvChannels.indexOf(data);
-        tvChannels.remove(position);
-        notifyItemRemoved(position);
-    }
 
 }

@@ -5,27 +5,27 @@ import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-public class TvChannelContract {
+class TvChannelContract {
 
     // The "Content authority" is a name for the entire content provider, similar to the
     // relationship between a domain name and its website.  A convenient string to use for the
     // content authority is the package name for the app, which is guaranteed to be unique on the
     // device.
-    public static final String CONTENT_AUTHORITY = "com.vasskob.tvchannels";
+    private static final String CONTENT_AUTHORITY = "com.vasskob.tvchannels";
 
 
     // Use CONTENT_AUTHORITY to create the base of all URI's which apps will use to contact
     // the content provider.
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
     // Possible paths (appended to base content URI for possible URI's)
     // For instance, content://com.example.android.sunshine.app/weather/ is a valid path for
     // looking at weather data. content://com.example.android.sunshine.app/givemeroot/ will fail,
     // as the ContentProvider hasn't been given any information on what to do with "givemeroot".
     // At least, let's hope not.  Don't be that dev, reader.  Don't be that dev.
-    public static final String PATH_CATEGORY = "category";
-    public static final String PATH_CHANNEL = "channel";
-    public static final String PATH_LISTING = "listing";
+    private static final String PATH_CATEGORY = "category";
+    private static final String PATH_CHANNEL = "channel";
+    private static final String PATH_LISTING = "listing";
 
 
     /* Inner class that defines the table contents of the location table */
@@ -63,7 +63,7 @@ public class TvChannelContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static String[] FULL_PROJECTION = new String[]{
+        public static final String[] FULL_PROJECTION = new String[]{
                 COLUMN_CATEGORY_ID,
                 COLUMN_CATEGORY_TITLE,
                 COLUMN_CATEGORY_PICTURE};
@@ -105,14 +105,14 @@ public class TvChannelContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static String[] FULL_PROJECTION = new String[]{
+        public static final String[] FULL_PROJECTION = new String[]{
                 COLUMN_CHANNEL_ID,
                 COLUMN_CHANNEL_NAME,
                 COLUMN_CHANNEL_URL,
                 COLUMN_CHANNEL_PICTURE,
                 COLUMN_CHANNEL_CATEGORY_ID,
                 COLUMN_CHANNEL_FAVORITE};
-        public static String[] NAME_PROJECTION = new String[]{
+        public static final String[] NAME_PROJECTION = new String[]{
                 COLUMN_CHANNEL_NAME};
     }
 
@@ -160,7 +160,7 @@ public class TvChannelContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
-        public static String[] FULL_PROJECTION = new String[]{
+        public static final String[] FULL_PROJECTION = new String[]{
                 COLUMN_LISTING_ID,
                 COLUMN_LISTING_DATE,
                 COLUMN_LISTING_TIME,

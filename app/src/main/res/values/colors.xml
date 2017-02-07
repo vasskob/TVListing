@@ -5,7 +5,5 @@
     <color name="colorAccent">#E65100</color>
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00000000</color>
-    <color name="black_20">#33000000</color>
     <color name="album_txt_C">#4c4c4c</color>
-    <color name="gray">#bdbdbd</color>
 </resources>

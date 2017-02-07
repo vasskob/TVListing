@@ -1,8 +1,6 @@
 package com.vasskob.tvchannels.ui.fragment;
 
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,49 +18,23 @@ import com.vasskob.tvchannels.ui.adapter.Fav_Channel_R_V_adapter;
 import java.util.List;
 
 public class FavoriteChFragment extends Fragment {
-    private static final String ARG_POSITION_NUMBER = "position_number";
-    private static final String PICKED_DATE = "picked_date";
 
-    View rootView;
-    RecyclerView rvCategory;
+    private RecyclerView rvCategory;
     private List<TvChannel> favoriteTvChannels;
-    DbFunction dbFunction;
-    Context context;
-    int position;
-    String picked_date;
-
+    private DbFunction dbFunction;
 
     public FavoriteChFragment() {
     }
 
 
     @Override
-    public void onAttach(Context context) {
-        SharedPreferences sp = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-        this.dbFunction = new DbFunction(context);
-        this.picked_date = sp.getString(PICKED_DATE, null);
-        //Toast.makeText(context, " Chared PREFFS is " + picked_date, Toast.LENGTH_LONG).show();
-        super.onAttach(context);
-    }
-
-    public static Fragment newInstance(int position, String picked_date) {
-        ListingFragment fragment = new ListingFragment();
-
-        Bundle args = new Bundle();
-        args.putString(PICKED_DATE, picked_date);
-        args.putInt(ARG_POSITION_NUMBER, position);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.container_layout, container, false);
+        View rootView = inflater.inflate(R.layout.container_layout, container, false);
 
         rvCategory = (RecyclerView) rootView.findViewById(R.id.container_rv);
-        System.out.println(" RVcategory " + rvCategory + "!!!!!!!!!!!!");
         rvCategory.setLayoutManager(new LinearLayoutManager(getActivity()));
+        dbFunction = new DbFunction(getContext());
         executeMyTask();
         return rootView;
     }
@@ -78,16 +50,11 @@ public class FavoriteChFragment extends Fragment {
         @Override
         protected List<TvChannel> doInBackground(Void... params) {
             favoriteTvChannels = dbFunction.getFavoriteChannels();
-            System.out.println("????>???" + favoriteTvChannels.size());
-            for (int i = 0; i < favoriteTvChannels.size(); i++) {
-                System.out.println("Channel PICTURE " + favoriteTvChannels.get(i).getPicture() + " !!!!!!!!");
-            }
             return favoriteTvChannels;
         }
 
         @Override
         protected void onPostExecute(List<TvChannel> tvChannels) {
-            System.out.println(">>>>>>>>>>>>>>>" + position + ">>>>>>>>>>");
             Fav_Channel_R_V_adapter adapter = new Fav_Channel_R_V_adapter(favoriteTvChannels, getActivity());
             rvCategory.setAdapter(adapter);
 

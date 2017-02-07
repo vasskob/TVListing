@@ -17,20 +17,17 @@ import java.util.Collections;
 import java.util.List;
 
 
+@SuppressWarnings("WeakerAccess")
 public class Fav_Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_Holder> {
 
-    List<TvChannel> tvChannels = Collections.emptyList();
-    Context context;
-    DbFunction dbFunction;
-    boolean isFavorite;
-
-    boolean[] checkBoxState;
+    private List<TvChannel> tvChannels = Collections.emptyList();
+    private final Context context;
+    private final DbFunction dbFunction;
 
 
     public Fav_Channel_R_V_adapter(List<TvChannel> tvChannels, Context context) {
         this.tvChannels = tvChannels;
         this.context = context;
-        checkBoxState = new boolean[tvChannels.size()];
         this.dbFunction = new DbFunction(context);
     }
 
@@ -45,21 +42,12 @@ public class Fav_Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_H
 
     @Override
     public void onBindViewHolder(final Channel_View_Holder holder, final int position) {
-//
-//  if (tvChannels.isEmpty()) {
-//            Toast.makeText(context, " Favorite list is empty" + tvChannels.toString(), Toast.LENGTH_LONG).show();
-//        }
 
         holder.channelName.setText(tvChannels.get(position).getName());
         holder.channelCategory.setText(tvChannels.get(position).getCategory_name());
         holder.channelUrl.setText(tvChannels.get(position).getUrl());
-//
-        if (tvChannels.get(position).getIsFavorite() == 1) {
-            isFavorite = true;
-        } else {
-            isFavorite = false;
-        }
 
+        boolean isFavorite = tvChannels.get(position).getIsFavorite() == 1;
 
         holder.favoriteButton.setFavorite(isFavorite, false);
 
@@ -75,7 +63,7 @@ public class Fav_Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_H
                 if (favorite) {
                     dbFunction.markAsFavoriteInDb(tvChannels.get(position).getName(), 1);
 
-                 } else {
+                } else {
 //
                     dbFunction.markAsFavoriteInDb(tvChannels.get(position).getName(), 0);
                     remove(tvChannels.get(holder.getAdapterPosition()));
@@ -95,13 +83,8 @@ public class Fav_Channel_R_V_adapter extends RecyclerView.Adapter<Channel_View_H
         return tvChannels.size();
     }
 
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
     // Remove a RecyclerView item containing a specified Data object
-    public void remove(TvChannel data) {
+    private void remove(TvChannel data) {
         int position = tvChannels.indexOf(data);
         tvChannels.remove(position);
         notifyItemRemoved(position);

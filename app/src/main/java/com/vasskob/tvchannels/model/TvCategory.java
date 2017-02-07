@@ -58,7 +58,7 @@ public class TvCategory {
         if (other == this) {
             return true;
         }
-        if ((other instanceof TvCategory) == false) {
+        if (!(other instanceof TvCategory)) {
             return false;
         }
         TvCategory rhs = ((TvCategory) other);

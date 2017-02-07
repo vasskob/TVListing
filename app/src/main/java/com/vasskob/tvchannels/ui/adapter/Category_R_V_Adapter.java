@@ -19,13 +19,14 @@ import com.vasskob.tvchannels.ui.fragment.ChannelFragment;
 import java.util.Collections;
 import java.util.List;
 
+import static com.vasskob.tvchannels.Constants.ARGUMENTS_CATEGORY_ID;
+
 
 public class Category_R_V_Adapter extends RecyclerView.Adapter<Category_View_Holder> {
 
-    List<TvCategory> tvCategoryList = Collections.emptyList();
-    Context context;
+    private List<TvCategory> tvCategoryList = Collections.emptyList();
+    private final Context context;
 
-    public static final String ARG_CATEGORY_ID = "categoryId";
 
     public Category_R_V_Adapter(List<TvCategory> tvCategoryList, Context context) {
         this.tvCategoryList = tvCategoryList;
@@ -58,7 +59,7 @@ public class Category_R_V_Adapter extends RecyclerView.Adapter<Category_View_Hol
             public void onClick(View v) {
                 Fragment fragment = new ChannelFragment();
                 Bundle bundle = new Bundle();
-                bundle.putInt(ARG_CATEGORY_ID, tvCategoryList.get(position).getId());
+                bundle.putInt(ARGUMENTS_CATEGORY_ID, tvCategoryList.get(position).getId());
                 fragment.setArguments(bundle);
 
 
@@ -85,11 +86,6 @@ public class Category_R_V_Adapter extends RecyclerView.Adapter<Category_View_Hol
     public int getItemCount() {
         //returns the number of elements the RecyclerView will display
         return tvCategoryList.size();
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
     }
 
 

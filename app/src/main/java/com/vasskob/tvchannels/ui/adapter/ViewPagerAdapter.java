@@ -14,10 +14,10 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    Context context;
+    private final Context context;
     private final List<Fragment> mFragmentList = new ArrayList<>();
     private final List<String> mFragmentTitleList = new ArrayList<>();
-    boolean isSorted;
+    private final boolean isSorted;
 
     public ViewPagerAdapter(FragmentManager manager, Context context, boolean isSorted) {
         super(manager);

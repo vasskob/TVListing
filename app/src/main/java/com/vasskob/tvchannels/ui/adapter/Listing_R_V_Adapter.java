@@ -16,12 +16,11 @@ import java.util.List;
 
 public class Listing_R_V_Adapter extends RecyclerView.Adapter<Listing_View_Holder> {
 
-    List<TvListing> list = Collections.emptyList();
-    Context context;
+    private List<TvListing> list = Collections.emptyList();
 
     public Listing_R_V_Adapter(List<TvListing> list, Context context) {
         this.list = list;
-        this.context = context;
+        Context context1 = context;
     }
 
 
@@ -48,11 +47,6 @@ public class Listing_R_V_Adapter extends RecyclerView.Adapter<Listing_View_Holde
     public int getItemCount() {
         //returns the number of elements the RecyclerView will display
         return list.size();
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
     }
 
 

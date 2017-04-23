@@ -28,3 +28,4 @@ The list of categories is shown on the screen with categories. When user click o
 For a list of all the channels and preferred ones, actions are the same.  DONE
 
 ![](https://github.com/vasskob/TVListing/tree/master/screenshot/screen.gif)
+![](https://github.com/vasskob/TVListing/tree/master/screenshot/demo8.gif)

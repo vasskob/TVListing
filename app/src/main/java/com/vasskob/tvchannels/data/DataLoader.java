@@ -153,12 +153,16 @@ public class DataLoader {
     }
 
     public void manualUpdate() {
+        final Calendar curentDay = Calendar.getInstance();
         SharedPreferences sP = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sP.edit();
         editor.putString("picked_date", null);
+        editor.putInt("date_for_calendar_icon", curentDay.get(Calendar.DAY_OF_MONTH));
         editor.apply();
-
         Intent intent = new Intent(context, LoadingActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
+
+
 }

@@ -36,19 +36,19 @@ public class LoadingActivity extends AppCompatActivity {
         lvBlock.startAnim();
 
         dataLoader = new DataLoader(this);
+        SharedPreferences sP = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
 
 
         if (isNetworkAvailable(this)) {
-            Snackbar mSnackbar = Snackbar.make(findViewById(R.id.splash_container), "Please wait. Data is loading", Snackbar.LENGTH_LONG);
+            Snackbar mSnackbar = Snackbar.make(findViewById(R.id.splash_container), "Please wait. Data is loading", Snackbar.LENGTH_INDEFINITE);
             View mView = mSnackbar.getView();
             TextView mTextView = (TextView) mView.findViewById(android.support.design.R.id.snackbar_text);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
                 mTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             else
                 mTextView.setGravity(Gravity.CENTER_HORIZONTAL);
-            mSnackbar.setDuration(10000000).show();
+            mSnackbar.show();
 
-            SharedPreferences sP = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
             if (sP.getString("picked_date", null) == null) {
 
                 dataLoader.loadData();
@@ -62,8 +62,14 @@ public class LoadingActivity extends AppCompatActivity {
 
 
         } else {
-            Snackbar.make(findViewById(R.id.splash_container), "Please connect to Internet for loading data", Snackbar.LENGTH_LONG)
-                    .show();
+            if (sP.getString("picked_date", null) != null) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Snackbar.make(findViewById(R.id.splash_container), "Please connect to Internet for loading data & restart App", Snackbar.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 

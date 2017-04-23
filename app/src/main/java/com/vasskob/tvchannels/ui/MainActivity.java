@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements DatePickerDialog.
         if (monthOfYear < 9) {
             month = "0" + (monthOfYear + 1);
         } else {
-            month = String.valueOf(monthOfYear);
+            month = String.valueOf(monthOfYear+1);
         }
 
         date = day + "/" + month + "/" + year;

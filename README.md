@@ -27,4 +27,4 @@ program schedule. (Main screen)
 The list of categories is shown on the screen with categories. When user click on some category, the list of channels of this category is displayed. When user sees the list of channels he can click on the item and by this action add or remove single item to the list of preferred channels. DONE
 For a list of all the channels and preferred ones, actions are the same.  DONE
 
-![](https://github.com/vasskob/TVListing/tree/master/screenshot/gif.gif)
+![](https://github.com/vasskob/TVListing/tree/master/screenshot/screen.gif)
